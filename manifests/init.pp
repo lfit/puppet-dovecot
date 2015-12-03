@@ -1,0 +1,133 @@
+# dovecot base module
+
+class dovecot {
+
+  $mycert = hiera('dovecot::ssl_cert_name')
+  $dovecot_protocols = hiera('dovecot::protocols')
+
+  package { [
+    'dovecot',
+  ]:
+    ensure => installed,
+  }
+
+  service { 'dovecot':
+    ensure  => running,
+    enable  => true,
+    require => [
+      Package['dovecot'],
+    ],
+  }
+
+  user { 'vmail':
+    uid        => '491',
+    gid        => '491',
+    home       => '/var/vmail',
+    managehome => false,
+    require    => [
+      Group['vmail'],
+    ],
+  }
+
+  group { 'vmail':
+    gid => '491',
+  }
+
+  File {
+    require => [ Package['dovecot'] ],
+    owner  => root,
+    group  => root,
+    mode   => '0644',
+  }
+
+  file { 'dovecot_conf-imap':
+    name    => '/etc/dovecot/dovecot.conf',
+    content => template('dovecot/dovecot.conf.erb'),
+    notify  => [
+      Service['dovecot'],
+    ],
+  }
+
+  file { '10-master_conf-imap':
+    name   => '/etc/dovecot/conf.d/10-master.conf',
+    source => [
+      'puppet:///modules/dovecot/10-master.conf',
+    ],
+    notify => [
+      Service['dovecot'],
+    ],
+  }
+
+
+  @file { 'dovecot-ldap.conf.ext':
+    name    => '/etc/dovecot/conf.d/dovecot-ldap.conf.ext',
+    owner   => root,
+    group   => root,
+    mode    => '0600',
+    source  => "puppet:///modules/private/dovecot/dovecot-ldap.conf.ext",
+    require => [
+      Package['dovecot'],
+    ],
+    notify  => Service['dovecot'],
+  }
+
+  @file { 'auth-ldap.conf.ext':
+    name   => '/etc/dovecot/conf.d/auth-ldap.conf.ext',
+    source => [
+      "puppet:///modules/dovecot/auth-ldap.conf.ext",
+    ],
+    notify  => [
+      Service['dovecot'],
+    ],
+  }
+
+  @file { '10-auth.conf':
+    name   => '/etc/dovecot/conf.d/10-auth.conf',
+    source => [
+      "puppet:///modules/dovecot/10-auth.conf",
+    ],
+    notify  => [
+      Service['dovecot'],
+      File['auth-ldap.conf.ext'],
+    ],
+
+  }
+
+  @file { '10-mail.conf':
+    name    => '/etc/dovecot/conf.d/10-mail.conf',
+    source  => [
+      "puppet:///modules/dovecot/10-mail.conf",
+    ],
+    require => [
+      User['vmail'],
+    ],
+    notify  => [
+      Service['dovecot'],
+    ],
+  }
+
+#  include private::dovecot
+
+  @file { '10-ssl.conf':
+    name    => '/etc/dovecot/conf.d/10-ssl.conf',
+    owner   => 'root',
+    group   => 'root',
+    mode    => '0444',
+    content => template('dovecot/10-ssl.conf.erb'),
+#    require => [
+#      File['/etc/pki/tls/certs/dovecot.crt'],
+#      File['/etc/pki/tls/private/dovecot.key'],
+#    ],
+    notify  => [
+      Service['dovecot'],
+    ],
+  }
+
+  file { '/var/vmail':
+    ensure  => directory,
+    owner   => 'root',
+    group   => 'vmail',
+    mode    => '0770',
+  }
+
+}
