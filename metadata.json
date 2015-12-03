@@ -1,0 +1,26 @@
+{
+  "name": "lfit-dovecot",
+  "version": "1.0.0",
+  "author": "rynofinn",
+  "summary": "Manage the dovecot imap service.",
+  "license": "Apache-2.0",
+  "source": "https://github.com/lfit/puppet-dovecot",
+  "project_page": "https://github.com/lfit/puppet-dovecot",
+  "issues_url": "https://github.com/lfit/puppet-dovecot/issues",
+  "operatingsystem_support": [
+    {
+      "operatingsystem": "RedHat",
+      "operatingsystemrelease": [ "7.0" ]
+    }
+  ],
+  "dependencies": [
+    {
+      "name": "tykeal-sslmgmt",
+      "version_requirement": ">=1.0.0"
+    }
+  ],
+  "tags": [
+    "imap","dovecot"
+  ]
+}
+
