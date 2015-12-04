@@ -14,6 +14,9 @@
 
 class dovecot {
 
+  include ::dovecot::packages
+  include ::dovecot::service
+
   $mycert = hiera('dovecot::ssl_cert_name')
   $dovecot_protocols = hiera('dovecot::protocols')
 
