@@ -21,8 +21,8 @@ class dovecot(
   include ::dovecot::service
 
   # local variables for use in templates
-  $mycert = dovecot::ssl_cert_name
-  $dovecot_protocols = hiera('dovecot::protocols')
+  #$mycert = dovecot::ssl_cert_name
+  #$dovecot_protocols = hiera('dovecot::protocols')
 
   user { 'vmail':
     uid        => '491',
