@@ -12,12 +12,16 @@
 #
 
 
-class dovecot {
+class dovecot(
+  String $ssl_cert_name = $dovecot::params::ssl_cert_name,
+  String $protocols     = $dovecot::params::protocols,
+  ) inherits dovecot::params {
 
   include ::dovecot::packages
   include ::dovecot::service
 
-  $mycert = hiera('dovecot::ssl_cert_name')
+  # local variables for use in templates
+  $mycert = dovecot::ssl_cert_name
   $dovecot_protocols = hiera('dovecot::protocols')
 
   user { 'vmail':
