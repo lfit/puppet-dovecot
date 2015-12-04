@@ -13,16 +13,12 @@
 
 
 class dovecot(
-  $ssl_cert_name = $dovecot::params::ssl_cert_name,
-  $protocols     = $dovecot::params::protocols,
+  String $ssl_cert_name = $dovecot::params::ssl_cert_name,
+  String $protocols     = $dovecot::params::protocols,
   ) inherits dovecot::params {
 
   include ::dovecot::packages
   include ::dovecot::service
-
-  # local variables for use in templates
-  #$mycert = dovecot::ssl_cert_name
-  #$dovecot_protocols = hiera('dovecot::protocols')
 
   user { 'vmail':
     uid        => '491',
@@ -55,9 +51,7 @@ class dovecot(
 
   file { '10-master_conf-imap':
     name   => '/etc/dovecot/conf.d/10-master.conf',
-    source => [
-      'puppet:///modules/dovecot/10-master.conf',
-    ],
+    source => 'puppet:///modules/dovecot/10-master.conf',
     notify => [
       Service['dovecot'],
     ],
@@ -76,20 +70,16 @@ class dovecot(
   }
 
   @file { 'auth-ldap.conf.ext':
-    name   => '/etc/dovecot/conf.d/auth-ldap.conf.ext',
-    source => [
-      "puppet:///modules/dovecot/auth-ldap.conf.ext",
-    ],
+    name    => '/etc/dovecot/conf.d/auth-ldap.conf.ext',
+    source  => "puppet:///modules/dovecot/auth-ldap.conf.ext",
     notify  => [
       Service['dovecot'],
     ],
   }
 
   @file { '10-auth.conf':
-    name   => '/etc/dovecot/conf.d/10-auth.conf',
-    source => [
-      "puppet:///modules/dovecot/10-auth.conf",
-    ],
+    name    => '/etc/dovecot/conf.d/10-auth.conf',
+    source  => "puppet:///modules/dovecot/10-auth.conf",
     notify  => [
       Service['dovecot'],
       File['auth-ldap.conf.ext'],
@@ -98,9 +88,7 @@ class dovecot(
 
   @file { '10-mail.conf':
     name    => '/etc/dovecot/conf.d/10-mail.conf',
-    source  => [
-      "puppet:///modules/dovecot/10-mail.conf",
-    ],
+    source  => "puppet:///modules/dovecot/10-mail.conf",
     require => [
       User['vmail'],
     ],
@@ -108,8 +96,6 @@ class dovecot(
       Service['dovecot'],
     ],
   }
-
-#  include private::dovecot
 
   @file { '10-ssl.conf':
     name    => '/etc/dovecot/conf.d/10-ssl.conf',
