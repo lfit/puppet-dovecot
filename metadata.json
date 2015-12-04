@@ -16,7 +16,11 @@
   "dependencies": [
     {
       "name": "tykeal-sslmgmt",
-      "version_requirement": ">=1.0.0"
+      "version_requirement": ">= 1.0.0 < 2.0.0"
+    },
+    {
+      "name": "puppet-stdlib",
+      "version_requirement": ">= 4.6.0"
     }
   ],
   "tags": [

@@ -1,23 +1,21 @@
-# dovecot base module
+# == Class: dovecot
+#
+# This class is the entry point into installing and configuring
+# a dovecot instance.
+#
+# === Parameters
+# 
+# === Authors
+# 
+# Clint Savage <csavage@linuxfoundation.org>
+# Ryan Finnin Day <rday@linuxfoundation.org>
+#
+
 
 class dovecot {
 
   $mycert = hiera('dovecot::ssl_cert_name')
   $dovecot_protocols = hiera('dovecot::protocols')
-
-  package { [
-    'dovecot',
-  ]:
-    ensure => installed,
-  }
-
-  service { 'dovecot':
-    ensure  => running,
-    enable  => true,
-    require => [
-      Package['dovecot'],
-    ],
-  }
 
   user { 'vmail':
     uid        => '491',
@@ -58,7 +56,6 @@ class dovecot {
     ],
   }
 
-
   @file { 'dovecot-ldap.conf.ext':
     name    => '/etc/dovecot/conf.d/dovecot-ldap.conf.ext',
     owner   => root,
@@ -90,7 +87,6 @@ class dovecot {
       Service['dovecot'],
       File['auth-ldap.conf.ext'],
     ],
-
   }
 
   @file { '10-mail.conf':
@@ -114,10 +110,6 @@ class dovecot {
     group   => 'root',
     mode    => '0444',
     content => template('dovecot/10-ssl.conf.erb'),
-#    require => [
-#      File['/etc/pki/tls/certs/dovecot.crt'],
-#      File['/etc/pki/tls/private/dovecot.key'],
-#    ],
     notify  => [
       Service['dovecot'],
     ],
