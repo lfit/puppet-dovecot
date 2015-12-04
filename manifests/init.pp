@@ -13,8 +13,8 @@
 
 
 class dovecot(
-  String $ssl_cert_name = $dovecot::params::ssl_cert_name,
-  String $protocols     = $dovecot::params::protocols,
+  $ssl_cert_name = $dovecot::params::ssl_cert_name,
+  $protocols     = $dovecot::params::protocols,
   ) inherits dovecot::params {
 
   include ::dovecot::packages
